@@ -1,0 +1,247 @@
+body {
+  background-color: #f5f5f5;
+}
+
+.summary {
+  border-right: 1px solid #c7c7c7;
+  padding-right: 30px;
+}
+
+.summary,
+.filter {
+  float: left;
+  line-height: 36px;
+  margin: 0 15px;
+  text-align: left;
+}
+.filter input {
+  margin-top: 0;
+  vertical-align: middle;
+}
+.filter label {
+  display: initial;
+  font-weight: normal;
+  margin-right: 10px;
+}
+.filter input[name=filter_age_days] {
+  line-height: normal;
+  width: 3em;
+}
+.filter label[for=filter_age_days] {
+  margin-right: 0;
+}
+
+.provider_status {
+  background: #d3d3d3;
+  padding: 10px;
+  text-align: right;
+}
+.status {
+  display: inline-block;
+  line-height: 36px;
+  margin: 0 15px;
+}
+.status img,
+.status span {
+  margin-right: 1em;
+}
+
+.provider_login {
+  background-color: #f3f3f3;
+  border-top: 1px solid #c7c7c7;
+  border-bottom: 1px solid #e7e7e7;
+  text-align: center;
+}
+
+.login {
+  display: inline-block;
+  margin: 0 auto;
+  width: 410px;
+}
+.login form {
+  background-color: #ffffff;
+  border: 1px solid #e7e7e7;
+  padding: 20px 30px;
+  margin: 40px;
+}
+.login h2 {
+  line-height: 48px;
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+.login h2 img {
+  margin-right: 0.5em;
+}
+.login input, .login select {
+  margin-bottom: 10px;
+}
+.login .login_failed {
+  color: #a94442;
+}
+
+.login .help-inline {
+  padding-right: 5px;
+}
+
+.provider_dashboard {
+  padding-top: 15px;
+}
+
+.grouplist {
+  clear: both;
+  -moz-column-count: 1;
+  -ms-column-count: 1;
+  -webkit-column-count: 1;
+  column-count: 1;
+  -moz-column-gap: 0;
+  -ms-column-gap: 0;
+  -webkit-column-gap: 0;
+  column-gap: 0;
+}
+@media (min-width: 900px) {
+  .grouplist {
+    -moz-column-count: 2;
+    -ms-column-count: 2;
+    -webkit-column-count: 2;
+    column-count: 2;
+  }
+}
+@media (min-width: 1350px) {
+  .grouplist {
+    -moz-column-count: 3;
+    -ms-column-count: 3;
+    -webkit-column-count: 3;
+    column-count: 3;
+  }
+}
+@media (min-width: 1800px) {
+  .grouplist {
+    -moz-column-count: 4;
+    -ms-column-count: 4;
+    -webkit-column-count: 4;
+    column-count: 4;
+  }
+}
+@media (min-width: 2250px) {
+  .grouplist {
+    -moz-column-count: 5;
+    -ms-column-count: 5;
+    -webkit-column-count: 5;
+    column-count: 5;
+  }
+}
+@media (min-width: 2700px) {
+  .grouplist {
+    -moz-column-count: 6;
+    -ms-column-count: 6;
+    -webkit-column-count: 6;
+    column-count: 6;
+  }
+}
+.group {
+  background: #e3e3e3;
+  border: 1px solid #d7d7d7;
+  border-radius: 10px;
+  column-break-inside: avoid;
+  -moz-column-break-inside: avoid;
+  -webkit-column-break-inside: avoid;
+  display: block;
+  margin: 0 5px 15px 5px;
+  padding: 10px 0;
+}
+.group_header {
+  line-height: 36px;
+  padding: 0 10px;
+}
+.group_header:hover {
+  cursor: pointer;
+}
+.group_header img.avatar {
+  float: left;
+  margin-right: 1em;
+}
+.group_header a {
+  font-size: 1.3em;
+}
+.group_header .actions {
+  float: right;
+}
+.group_header .query_repos {
+  display: none;
+}
+.group_header:hover .query_repos {
+  display: initial;
+}
+
+.repolist {
+  background-color: #f5f5f5;
+  clear: both;
+  margin-top: 5px;
+  overflow: hidden;
+}
+.repo {
+  border-top: 1px solid #d7d7d7;
+}
+.repo_header {
+  padding: 2px 10px;
+}
+.repo_header:hover {
+  background-color: #d2d2e3;
+  cursor: pointer;
+}
+.repo_header a {
+  padding-left: 5px;
+}
+.repo_header .actions {
+  float: right;
+}
+.repo_header .reset_contributions {
+  margin-right: 5px;
+  visibility: hidden;
+}
+.repo_header .reset_contributions,
+.repo_header .query_contributions,
+.repo_header .compute_contributions {
+  display: none;
+}
+.repo_header:hover .reset_contributions,
+.repo_header:hover .query_contributions {
+  display: initial;
+}
+.repo_header .badge {
+  margin-left: 5px;
+}
+.repo_header .badge-queried {
+  background-color: #3a87ad;
+}
+
+.contributionlist {
+  clear: both;
+}
+.contribution {
+  border-top: 1px dotted #d7d7d7;;
+  padding: 3px 10px 3px 30px;
+}
+.contribution:hover {
+  background-color: #e9e9f5;
+}
+.contribution .actions {
+  float: right;
+}
+
+.badge-additions {
+  background-color: #449d44;
+}
+.badge-deletions {
+  background-color: #c9302c;
+}
+.badge-commits {
+  background-color: #3a87ad;
+}
+
+.glyphicon-refresh:hover {
+  color: #3389d9;
+}
+.glyphicon-blue {
+  color: #3389d9;
+}

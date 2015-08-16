@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Statistics Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://netdna.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet" media="screen" />
+    <link href="css/style.css" rel="stylesheet" media="screen" />
+    <script>
+      // getWeek prototype from https://bitbucket.org/agustinhaller/date.getweek
+      Date.prototype.getWeek =  function() {
+        // We have to compare against the first monday of the year not the 01/01
+        var day_miliseconds = 60 * 60 * 24 * 1000;
+        var onejan = new Date(this.getFullYear(), 0, 1, 0, 0, 0);
+        var onejan_day = (onejan.getDay() == 0) ? 7 : onejan.getDay();
+        var days_for_next_monday = (8 - onejan_day);
+        // This refers to the miliseconds of the next monday after 01/01
+        var onejan_next_monday_time = onejan.getTime() + (days_for_next_monday * day_miliseconds);
+        // If one jan is not a monday, get the first monday of the year
+        var first_monday_year_time = (onejan_day > 1) ? onejan_next_monday_time : onejan.getTime();
+        var this_date = new Date(this.getFullYear(), this.getMonth(), this.getDate(), 0, 0, 0);
+        var this_time = this_date.getTime();
+        var days_from_first_monday = Math.round((this_time - first_monday_year_time) / day_miliseconds);
+        var first_monday_year = new Date(first_monday_year_time);
+
+        // We add 1 to "days_from_first_monday" because if "days_from_first_monday" is *7,
+        // then 7/7 = 1, and as we are 7 days from first monday,
+        // we should be in week number 2 instead of week number 1 (7/7=1)
+        // We consider week number as 52 when "days_from_first_monday" is lower than 0,
+        // that means the actual week started before the first monday so that means we are on the firsts
+        // days of the year (ex: we are on Friday 01/01, then "days_from_first_monday"=-3,
+        // so friday 01/01 is part of week number 52 from past year)
+        // "days_from_first_monday<=364" because (364+1)/7 == 52, if we are on day 365, then (365+1)/7 >= 52 (Math.ceil(366/7)=53) and thats wrong
+        return (days_from_first_monday >= 0 && days_from_first_monday < 364) ? Math.ceil((days_from_first_monday + 1) / 7) : 52;
+      }
+    </script>
+  </head>
+  <body>
+    <main role="main" id="main"></main>
+
+    <script id="statistics-dashboard" type="text/template">
+      <div class="provider_status">
+      </div>
+      <div class="provider_login">
+      </div>
+      <div class="provider_dashboard">
+      </div>
+    </script>
+
+
+    <script id="github-status-not-logged-in" type="text/template">
+      <img src="img/github-mark.png" height="36px" width="36px" alt="" />
+      <div class="btn-group btn-group-sm">
+        <button class="login_button btn btn-default">Log in</button>
+      </div>
+    </script>
+
+    <script id="github-status-logged-in" type="text/template">
+      <a href="<%= html_url %>" target="_blank"><img src="<%= avatar_url %>" height="36px" width="36px" alt="" /></a>
+      <span class="query_groups glyphicon glyphicon-refresh" title="Refresh organization units"></span>
+      <div class="btn-group btn-group-sm">
+        <button class="logout_button btn btn-default">Log out, <%- name %></button>
+      </div>
+    </script>
+
+    <script id="github-login-form" type="text/template">
+      <form>
+        <h2><img src="img/github-mark.png" height="48px" width="48px" alt="" />Sign in</h2>
+        <label>Choose authentication method</label>
+        <select class="form-control github_authtype">
+          <option value="oauth" selected="selected">OAuth</option>
+          <option value="basic">Basic</option>
+        </select>
+        <input class="form-control github_token" type="text" placeholder="GitHub OAuth token?" />
+        <input class="form-control github_username" type="text" placeholder="GitHub username?" />
+        <input class="form-control github_password" type="password" placeholder="GitHub password?" />
+        <button class="login_button btn btn-primary">Login</button>
+        <span class="login_failed"><span class="help-inline">failed - please retry</span></span>
+        <button class="hide_button btn btn-default">Hide</button>
+      </form>
+    </script>
+
+
+    <script id="test-status-not-logged-in" type="text/template">
+      <div class="btn-group btn-group-sm">
+        <button class="login_button btn btn-default">Log in</button>
+      </div>
+    </script>
+
+    <script id="test-status-logged-in" type="text/template">
+      <span>
+        Groups: <%= groups %> [<a href="#" class="add_group_button">+</a>|<a href="#" class="remove_group_button">-</a>],
+        Repos: <%= repos %> [<a href="#" class="add_repo_button">+</a>|<a href="#" class="remove_repo_button">-</a>],
+        Contributions: <%= contributions %> [<a href="#" class="add_contribution_button">+</a>|<a href="#" class="remove_contribution_button">-</a>]
+      </span>
+      <span class="query_groups glyphicon glyphicon-refresh" title="Refresh groups"></span>
+      <div class="btn-group btn-group-sm">
+        <button class="logout_button btn btn-default">Log out</button>
+      </div>
+    </script>
+
+    <script id="test-login-form" type="text/template">
+      <form>
+        <h2>Sign in</h2>
+        <button class="login_button btn btn-primary">Login</button>
+        <button class="hide_button btn btn-default">Hide</button>
+      </form>
+    </script>
+
+
+    <script id="summary-template" type="text/template">
+      Summary:
+      <% if (contribution_summary.summary.commits > 0) {
+        kinds = {'additions': '+', 'deletions': '-', 'commits': 'c'}
+        for (var kind in kinds) {
+          sum = contribution_summary.summary[kind]
+          if (sum) {
+            title = ''
+            for (var i = 0; i < contribution_summary.ordered_logins[kind].length; ++i) {
+              login = contribution_summary.ordered_logins[kind][i]
+              if (contribution_summary.by_login[login][kind]) {
+                if (title != '') {
+                  title += '\n'
+                }
+                count = contribution_summary.by_login[login][kind]
+                title += login + ': ' + count +
+                  ' (' + (100.0 * count / sum).toPrecision(3) + '%)'
+              }
+            } %>
+            <span class="badge badge-<%= kind %>" title="<%= title %>"><%= kinds[kind] %><%= sum %></span>
+          <% }
+        }
+      } %>
+    </script>
+
+
+    <script id="filter-template" type="text/template">
+      <input type="checkbox" name="filter_starred" id="filter_starred"<% if (starred) { print(' checked="checked"') } %>/>
+      <label for="filter_starred">Filter starred</label>
+    </script>
+
+
+    <script id="group-header-template" type="text/template">
+      <span class="actions">
+        <span class="query_repos glyphicon glyphicon-refresh"></span>
+        <span class="loader"><img src="img/loader.gif" width="16px" height="16px" alt="" /></span>
+        <% if (contribution_summary.summary.commits > 0) {
+          kinds = {'additions': '+', 'deletions': '-', 'commits': 'c'}
+          for (var kind in kinds) {
+            sum = contribution_summary.summary[kind]
+            if (sum) {
+              title = ''
+              for (var i = 0; i < contribution_summary.ordered_logins[kind].length; ++i) {
+                login = contribution_summary.ordered_logins[kind][i]
+                if (contribution_summary.by_login[login][kind]) {
+                  if (title != '') {
+                    title += '\n'
+                  }
+                  count = contribution_summary.by_login[login][kind]
+                  title += login + ': ' + count +
+                    ' (' + (100.0 * count / sum).toPrecision(3) + '%)'
+                }
+              } %>
+              <span class="badge badge-<%= kind %>" title="<%= title %>"><%= kinds[kind] %><%= sum %></span>
+            <% }
+          }
+        } %>
+      </span>
+      <img class="avatar" src="<%= avatar_url %>" height="36px" width="36px" alt="" />
+      <a href="https://github.com/<%= name %>" target="_blank"><%- name %></a>
+      <% if (starred_repos.length > 0) { %>
+        <span class="glyphicon glyphicon-star"></span>
+      <% } %>
+      <div class="clearfix"></div>
+    </script>
+
+    <script id="repo-header-template" type="text/template">
+      <span class="actions">
+        <span class="reset_contributions glyphicon glyphicon-remove"></span>
+        <span class="query_contributions glyphicon glyphicon-refresh"></span>
+        <span class="compute_contributions glyphicon glyphicon-time"></span>
+        <span class="loader"><img src="img/loader.gif" width="16px" height="16px" alt="" /></span>
+        <a href="<%= contributions_url %>" target="_blank">
+          <% if (contribution_summary.summary.commits == 0) { %>
+            <span class="badge">&middot;</span>
+          <% } else {
+            kinds = {'additions': '+', 'deletions': '-', 'commits': 'c'}
+            for (var kind in kinds) {
+              if (contribution_summary.summary[kind]) {
+                title = ''
+                for (var i = 0; i < contribution_summary.ordered_logins[kind].length; ++i) {
+                  login = contribution_summary.ordered_logins[kind][i]
+                  if (contribution_summary.by_login[login][kind]) {
+                    if (title != '') {
+                      title += '\n'
+                    }
+                    title += login + ': ' + contribution_summary.by_login[login][kind]
+                  }
+                } %>
+                <span class="badge badge-<%= kind %>" title="<%= title %>"><%= kinds[kind] %><%= contribution_summary.summary[kind] %></span>
+              <% }
+            }
+          } %>
+        </a>
+      </span>
+      <span class="glyphicon glyphicon-folder-close"></span><span class="glyphicon glyphicon-folder-open"></span>
+      <a href="<%= repo_url %>" target="_blank"><%- name %></a>
+      <% if (is_starred) { %>
+        <span class="glyphicon glyphicon-star"></span>
+      <% } %>
+      <div class="clearfix"></div>
+    </script>
+
+    <script id="contribution-template" type="text/template">
+      <span class="label label-default">W<%= timestamp.getWeek() %> <%= timestamp.getFullYear() %></span>
+      <%= login %>
+      <span class="actions">
+        <% if (additions) { %>
+          <span class="badge badge-additions">+<%= additions %></span>
+        <% } %>
+        <% if (deletions) { %>
+          <span class="badge badge-deletions">-<%= deletions %></span>
+        <% } %>
+        <% if (commits) { %>
+          <span class="badge badge-commits">c<%= commits %></span>
+        <% } %>
+      </span>
+    </script>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/json3/3.3.2/json3.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.7.0/underscore-min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/backbone.js/1.1.2/backbone-min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-url/1.8.4/url.min.js"></script>
+
+    <script src="js/base64_encode.js"></script>
+    <script src="js/statistics_dashboard.js"></script>
+
+    <script src="js/github.js"></script>
+    <script src="js/github_provider.js"></script>
+    <script src="js/test_provider.js"></script>
+
+    <script src="config.js"></script>
+  </body>
+</html>
