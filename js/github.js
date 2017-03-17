@@ -4,7 +4,7 @@
  *
  * Copyright (c) 2013-2015, Dirk Thomas
  * Distributed under the BSD 2-Clause license
- * https://github.com/dirk-thomas/statistics_dashboard/
+ * https://github.com/dirk-thomas/contributions_dashboard/
  **/
 
 (function(namespace) {
@@ -103,7 +103,7 @@
 
       // require user agent
       // https://developer.github.com/v3/#user-agent-required
-      //xhr.setRequestHeader('User-Agent', 'https://github.com/dirk-thomas/statistics_dashboard/');
+      //xhr.setRequestHeader('User-Agent', 'https://github.com/dirk-thomas/contributions_dashboard/');
 
       xhr.onreadystatechange = function () {
         if (this.readyState == 2) {

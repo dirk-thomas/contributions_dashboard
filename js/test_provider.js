@@ -1,13 +1,13 @@
 /**
  * Provider generating test data
- * into the statistics dashboard.
+ * into the contributions dashboard.
  *
  * Copyright (c) 2013-2015, Dirk Thomas
  * Distributed under the BSD 2-Clause license
- * https://github.com/dirk-thomas/statistics_dashboard/
+ * https://github.com/dirk-thomas/contributions_dashboard/
  **/
 
-(function(namespace, statistics_dashboard_namespace) {
+(function(namespace, contributions_dashboard_namespace) {
 
   namespace.TestModel = Backbone.Model.extend({
     initialize: function() {
@@ -141,15 +141,15 @@
       }
     },
     increment_contributions: function() {
-      console.debug('StatusView.increment_statistics()');
-      var statistics = this.test_model.get('statistics');
-      this.test_model.set({statistics: statistics + 1});
+      console.debug('StatusView.increment_contributions()');
+      var contributions = this.test_model.get('contributions');
+      this.test_model.set({contributions: contributions + 1});
     },
-    decrement_statistics: function() {
-      console.debug('StatusView.decrement_statistics()');
-      var statistics = this.test_model.get('statistics');
-      if (statistics > 0) {
-        this.test_model.set({statistics: statistics - 1});
+    decrement_contributions: function() {
+      console.debug('StatusView.decrement_contributions()');
+      var contributions = this.test_model.get('contributions');
+      if (contributions > 0) {
+        this.test_model.set({contributions: contributions - 1});
       }
     },
     login: function(event) {
@@ -190,7 +190,7 @@
               data['starred_repos'].push('R' + j)
             }
           }
-          models.push(new statistics_dashboard_namespace.GroupModel(data));
+          models.push(new contributions_dashboard_namespace.GroupModel(data));
         }
         group_collection.set(models);
       }
@@ -208,7 +208,7 @@
             contributions_url: '',
             is_starred: i % 3 == 0,
           };
-          models.push(new statistics_dashboard_namespace.RepositoryModel(data));
+          models.push(new contributions_dashboard_namespace.RepositoryModel(data));
         }
         setTimeout(function(){
           repository_collection.set(models);
@@ -235,7 +235,7 @@
             updated_at: i,
             labels: [],
           };
-          models.push(new statistics_dashboard_namespace.ContributionModel(data));
+          models.push(new contributions_dashboard_namespace.ContributionModel(data));
         }
         setTimeout(function(){
           contribution_collection.set(models);
@@ -245,8 +245,8 @@
         }, 250);
       }
 
-      this.group_collection = new statistics_dashboard_namespace.GroupCollection();
-      this.group_list_view = new statistics_dashboard_namespace.GroupListView({
+      this.group_collection = new contributions_dashboard_namespace.GroupCollection();
+      this.group_list_view = new contributions_dashboard_namespace.GroupListView({
         collection: this.group_collection,
         query_groups: _query_groups,
         query_group_repos: _query_group_repos,
@@ -308,4 +308,4 @@
     };
   };
 
-})(window.test_provider = window.test_provider || {}, window.statistics_dashboard);
+})(window.test_provider = window.test_provider || {}, window.contributions_dashboard);

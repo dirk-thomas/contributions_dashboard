@@ -1,13 +1,13 @@
 /**
  * Provider incorporating GitHub contributions
- * into the statistics dashboard.
+ * into the contributions dashboard.
  *
  * Copyright (c) 2013-2015, Dirk Thomas
  * Distributed under the BSD 2-Clause license
- * https://github.com/dirk-thomas/statistics_dashboard/
+ * https://github.com/dirk-thomas/contributions_dashboard/
  **/
 
-(function(namespace, github_namespace, statistics_dashboard_namespace) {
+(function(namespace, github_namespace, contributions_dashboard_namespace) {
 
   namespace.GitHubModel = Backbone.Model.extend({
     initialize: function() {
@@ -189,9 +189,9 @@
                 deletions: contribution.d,
                 commits: contribution.c,
               };
-              //contribution_collection.add(new statistics_dashboard_namespace.ContributionModel(data), {merge: true});
+              //contribution_collection.add(new contributions_dashboard_namespace.ContributionModel(data), {merge: true});
               console.debug(' - ' + contribution.a + ' ' + contribution.d + ' ' + contribution.c);
-              models.push(new statistics_dashboard_namespace.ContributionModel(data));
+              models.push(new contributions_dashboard_namespace.ContributionModel(data));
             }
           });
         });
@@ -242,8 +242,8 @@
           if (group_model.get('starred_repos').indexOf(data.name) != -1) {
             data.is_starred = true;
           }
-          //repository_collection.add(new statistics_dashboard_namespace.RepositoryModel(data), {merge: true});
-          models.push(new statistics_dashboard_namespace.RepositoryModel(data));
+          //repository_collection.add(new contributions_dashboard_namespace.RepositoryModel(data), {merge: true});
+          models.push(new contributions_dashboard_namespace.RepositoryModel(data));
         });
         repository_collection.set(models);
         if (complete_callback) {
@@ -281,8 +281,8 @@
           if (org_model.get('starred_repos').indexOf(data.name) != -1) {
             data.is_starred = true;
           }
-          //repository_collection.add(new statistics_dashboard_namespace.RepositoryModel(data), {merge: true});
-          models.push(new statistics_dashboard_namespace.RepositoryModel(data));
+          //repository_collection.add(new contributions_dashboard_namespace.RepositoryModel(data), {merge: true});
+          models.push(new contributions_dashboard_namespace.RepositoryModel(data));
         });
         repository_collection.set(models);
         if (complete_callback) {
@@ -344,8 +344,8 @@
                 avatar_url: group.avatar_url,
                 starred_repos: get_starred_repos(res_starred, group.login),
               };
-              //group_collection.add(new statistics_dashboard_namespace.GroupModel(data), {merge: true});
-              models.push(new statistics_dashboard_namespace.GroupModel(data));
+              //group_collection.add(new contributions_dashboard_namespace.GroupModel(data), {merge: true});
+              models.push(new contributions_dashboard_namespace.GroupModel(data));
             });
             group_collection.set(models);
           }
@@ -389,8 +389,8 @@
         query_contributors_stats(github, full_name, user, contribution_collection, complete_callback);
       }
 
-      this.group_collection = new statistics_dashboard_namespace.GroupCollection();
-      this.group_list_view = new statistics_dashboard_namespace.GroupListView({
+      this.group_collection = new contributions_dashboard_namespace.GroupCollection();
+      this.group_list_view = new contributions_dashboard_namespace.GroupListView({
         collection: this.group_collection,
         query_groups: _query_groups,
         query_group_repos: _query_group_repos,
@@ -452,4 +452,4 @@
     };
   };
 
-})(window.github_provider = window.github_provider || {}, window.github, window.statistics_dashboard);
+})(window.github_provider = window.github_provider || {}, window.github, window.contributions_dashboard);

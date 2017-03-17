@@ -1,10 +1,10 @@
 /**
- * Statistics dashboard visualizes contributions
+ * Contributions dashboard visualizes contributions
  * from various platforms in a single user interface.
  *
  * Copyright (c) 2013-2015, Dirk Thomas
  * Distributed under the BSD 2-Clause license
- * https://github.com/dirk-thomas/statistics_dashboard/
+ * https://github.com/dirk-thomas/contributions_dashboard/
  **/
 
 (function(namespace) {
@@ -844,12 +844,12 @@
   });
 
 
-  namespace.StatisticsDashboardView = Backbone.View.extend({
+  namespace.ContributionsDashboardView = Backbone.View.extend({
     tagName: 'div',
-    className: 'statistics_dashboard',
-    template: _.template($('#statistics-dashboard').html()),
+    className: 'contributions_dashboard',
+    template: _.template($('#contributions-dashboard').html()),
     initialize: function() {
-      console.debug('StatisticsDashboardView.initialize()');
+      console.debug('ContributionsDashboardView.initialize()');
       this.$el.html(this.template());
 
       this._summary_model = new namespace.SummaryModel();
@@ -863,15 +863,15 @@
       this._providers = [];
     },
     render: function() {
-      console.debug('StatisticsDashboardView.render()');
+      console.debug('ContributionsDashboardView.render()');
       return this;
     },
     get_filter_model: function() {
-      console.debug('StatisticsDashboardView.get_filter_model()');
+      console.debug('ContributionsDashboardView.get_filter_model()');
       return this._filter_model;
     },
     add_provider: function(provider) {
-      console.log('StatisticsDashboardView.add_provider() ' + provider.get_name());
+      console.log('ContributionsDashboardView.add_provider() ' + provider.get_name());
       this.$('.provider_status').append(provider.get_status_view().render().el);
       this.$('.provider_login').append(provider.get_login_view().render().el);
       this.$('.provider_dashboard').append(provider.get_dashboard_view().render().el);
@@ -880,4 +880,4 @@
     },
   });
 
-})(window.statistics_dashboard = window.statistics_dashboard || {});
+})(window.contributions_dashboard = window.contributions_dashboard || {});

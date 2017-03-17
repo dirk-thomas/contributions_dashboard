@@ -1,14 +1,14 @@
-Statistics Dashboard
+Contributions Dashboard
 ====================
 
-The statistics dashboard is a client side web application which lets you log in to GitHub showing statistics across all organization units and repositories.
+The contributions dashboard is a client side web application which lets you log in to GitHub showing code contributions (number of added / removed lines and number of commits) across all organization units and repositories.
 
 It does not require to run a web server since the HTML page uses JS to talk directly to the GitHub API.
 
 How to run it
 -------------
 
-You can either use it directly from the GitHub page: http://dirk-thomas.github.io/statistics_dashboard/
+You can either use it directly from the GitHub page: http://dirk-thomas.github.io/contributions_dashboard/
 
 Or you can clone the repository and open the index.html file using a file:// url.
 
